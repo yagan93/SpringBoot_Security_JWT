@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,13 @@ public class UserController {
   public UserController(UserService userService, UserMapper userMapper) {
     this.userService = userService;
     this.userMapper = userMapper;
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<UserDTO> getAuthenticatedUser() {
+    UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext()
+        .getAuthentication().getPrincipal();
+    return new ResponseEntity<>(userMapper.toDTO(userDetailsImpl.user()), HttpStatus.OK);
   }
 
   @GetMapping("/{id}")
