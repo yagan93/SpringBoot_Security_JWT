@@ -3,7 +3,6 @@ package com.example.jwt.core.security;
 import com.example.jwt.core.security.helpers.JwtProperties;
 import com.example.jwt.domain.user.UserService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -15,7 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -29,14 +28,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurityConfig {
 
   private final UserService userService;
-  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final PasswordEncoder passwordEncoder;
   private final JwtProperties jwtProperties;
 
-  @Autowired
-  public WebSecurityConfig(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder,
+  public WebSecurityConfig(UserService userService, PasswordEncoder passwordEncoder,
       JwtProperties jwtProperties) {
     this.userService = userService;
-    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    this.passwordEncoder = passwordEncoder;
     this.jwtProperties = jwtProperties;
   }
 
@@ -76,9 +74,8 @@ public class WebSecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setPasswordEncoder(bCryptPasswordEncoder);
-    provider.setUserDetailsService(userService);
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userService);
+    provider.setPasswordEncoder(passwordEncoder);
     return new ProviderManager(provider);
   }
 

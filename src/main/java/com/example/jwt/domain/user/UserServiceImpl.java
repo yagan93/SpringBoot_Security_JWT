@@ -2,22 +2,20 @@ package com.example.jwt.domain.user;
 
 import com.example.jwt.core.generic.ExtendedServiceImpl;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl extends ExtendedServiceImpl<User> implements UserService {
 
-  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
-  @Autowired
   public UserServiceImpl(UserRepository repository, Logger logger,
-      BCryptPasswordEncoder bCryptPasswordEncoder) {
+      PasswordEncoder passwordEncoder) {
     super(repository, logger);
-    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -28,7 +26,7 @@ public class UserServiceImpl extends ExtendedServiceImpl<User> implements UserSe
 
   @Override
   public User register(User user) {
-    user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
     return save(user);
   }
 }
