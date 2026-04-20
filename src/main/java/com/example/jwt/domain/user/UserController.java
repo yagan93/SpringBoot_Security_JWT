@@ -37,25 +37,23 @@ public class UserController {
   public ResponseEntity<UserDTO> getAuthenticatedUser() {
     UserDetailsImpl userDetailsImpl = (UserDetailsImpl) SecurityContextHolder.getContext()
         .getAuthentication().getPrincipal();
-    return new ResponseEntity<>(userMapper.toDTO(userDetailsImpl.user()), HttpStatus.OK);
+    return ResponseEntity.ok(userMapper.toDTO(userDetailsImpl.user()));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<UserDTO> retrieveById(@PathVariable UUID id) {
-    User user = userService.findById(id);
-    return new ResponseEntity<>(userMapper.toDTO(user), HttpStatus.OK);
+    return ResponseEntity.ok(userMapper.toDTO(userService.findById(id)));
   }
 
   @GetMapping({"", "/"})
   public ResponseEntity<List<UserDTO>> retrieveAll() {
-    List<User> users = userService.findAll();
-    return new ResponseEntity<>(userMapper.toDTOs(users), HttpStatus.OK);
+    return ResponseEntity.ok(userMapper.toDTOs(userService.findAll()));
   }
 
   @PostMapping("/register")
   public ResponseEntity<UserDTO> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
     User user = userService.register(userMapper.fromUserRegisterDTO(userRegisterDTO));
-    return new ResponseEntity<>(userMapper.toDTO(user), HttpStatus.CREATED);
+    return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDTO(user));
   }
 
   @PutMapping("/{id}")
@@ -63,13 +61,13 @@ public class UserController {
   public ResponseEntity<UserDTO> updateById(@PathVariable UUID id,
       @Valid @RequestBody UserDTO userDTO) {
     User user = userService.updateById(id, userMapper.fromDTO(userDTO));
-    return new ResponseEntity<>(userMapper.toDTO(user), HttpStatus.OK);
+    return ResponseEntity.ok(userMapper.toDTO(user));
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthority('USER_DELETE')")
   public ResponseEntity<Void> deleteById(@PathVariable UUID id) {
     userService.deleteById(id);
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return ResponseEntity.noContent().build();
   }
 }
