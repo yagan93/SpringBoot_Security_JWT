@@ -9,9 +9,11 @@ COPY src src
 RUN ./gradlew bootJar --no-daemon -x test
 
 # Stage 2: Runtime
-FROM eclipse-temurin:25-jre-jammy
+FROM eclipse-temurin:25-jre-alpine
+RUN adduser -D -u 1001 appuser
 WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
+RUN chown appuser:appuser app.jar
+USER appuser
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
-

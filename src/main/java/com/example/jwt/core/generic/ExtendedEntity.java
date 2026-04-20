@@ -2,17 +2,16 @@ package com.example.jwt.core.generic;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import java.util.UUID;
-import org.hibernate.annotations.GenericGenerator;
 
 @MappedSuperclass
 public abstract class ExtendedEntity {
 
   @Id
-  @GeneratedValue(generator = "uuid2")
-  @GenericGenerator(name = "UUID", type = org.hibernate.id.uuid.UuidGenerator.class)
+  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 

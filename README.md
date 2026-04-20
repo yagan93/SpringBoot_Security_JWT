@@ -1,1 +1,2 @@
-Spring 3.5.4 compliant app that demonstrates the authentication and authorization of a user via JWT
+Spring 4.1 compliant app that demonstrates the authentication and authorization of a user via JWT
+
